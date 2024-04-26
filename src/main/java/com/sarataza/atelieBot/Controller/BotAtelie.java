@@ -6,6 +6,7 @@ import com.sarataza.atelieBot.Repository.AdminLoginRepository;
 import com.sarataza.atelieBot.Config.BotConfig;
 import com.sarataza.atelieBot.Model.AdminEntity;
 import com.sarataza.atelieBot.Repository.UserRepository;
+import com.sarataza.atelieBot.Service.AdminBotService;
 import com.sarataza.atelieBot.Service.UserBotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ public class BotAtelie extends TelegramLongPollingBot {
     private final AdminLoginRepository adminLoginRepository;
     private final UserRepository userRepository;
     private final UserBotService userBotService;
+    private final AdminBotService adminBotService;
 
 
     @Override
@@ -48,16 +50,30 @@ public class BotAtelie extends TelegramLongPollingBot {
         else {
             chat = update.getCallbackQuery().getMessage().getChatId();
         }
-        log.info(chat.toString());
         SendMessage sendMessage = new SendMessage();
         Optional<AdminEntity> admin = adminLoginRepository.getAdminEntityByLogin(chat);
         Optional<AppUserEntity> user = userRepository.getAppUserEntitiesByLogin(chat);
+        if(update.getMessage() != null &&update.getMessage().getText() != null){
+        log.info(update.getMessage().getText());}
+        log.info(admin.get().getState());
         if (admin.isPresent()) {
             switch (admin.get().getState()) {
-                case "/start" -> sendMessage.setText("привет админ");
+                case ("general") -> {
+                    sendMessage = adminBotService.general(update);
+                }
+                case ("change_order_status_ready")->{
+                    sendMessage = adminBotService.changeOrderStatus(update);
+                }
+                case ("add_order_begin")->{
+                    sendMessage = adminBotService.addOrderFirstStep(update);
+                }
+                case ("add_order_step_two")-> {
+                    sendMessage = adminBotService.addOrderTwoStep(update);
+                }
+                case ("add_order_step_three") -> {
+                    sendMessage = adminBotService.addOrderThreeStep(update);
+                }
             }
-            sendMessage.setText("привет админ");
-            sendMessage.setChatId(chat);
             sendMessageToUser(sendMessage);
         } else if(user.isPresent()) {
           switch (user.get().getState()){

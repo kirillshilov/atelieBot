@@ -15,7 +15,7 @@ public class OrderEntity {
     private Integer number;
     private String works;
     private String LocalDate;
-    private Boolean is_done;
+    private Boolean done;
     @ManyToOne (cascade = CascadeType.REFRESH)
     @ToString.Exclude
     @JoinColumn(name = "appUserEntity_id")

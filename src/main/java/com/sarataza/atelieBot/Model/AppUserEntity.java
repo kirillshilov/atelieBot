@@ -22,5 +22,5 @@ public class AppUserEntity {
     private String state;
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
-    private List<OrderEntity> orderList;
+    private List<OrderEntity> orderList = new ArrayList<>();
 }

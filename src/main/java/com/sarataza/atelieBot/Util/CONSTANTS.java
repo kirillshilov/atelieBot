@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class CONSTANTS {
-public static final String FAQ = "О нас";
+public static final String FAQ = "Ателье +798857544855";
 }

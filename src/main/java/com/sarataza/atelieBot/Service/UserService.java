@@ -5,6 +5,7 @@ import com.sarataza.atelieBot.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +23,9 @@ public class UserService {
 
     public Optional<AppUserEntity> getAppUserByPhone(String phone) {
         return userRepository.getAppUserEntitiesByPhone(phone);
+    }
+    public List<AppUserEntity> getAllAppUser(){
+        return userRepository.findAll();
     }
 
     public String getUserToStringByIdForAdmin(Long id) {

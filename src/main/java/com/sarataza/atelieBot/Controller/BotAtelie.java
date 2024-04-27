@@ -2,6 +2,7 @@ package com.sarataza.atelieBot.Controller;
 
 
 import com.sarataza.atelieBot.Model.AppUserEntity;
+import com.sarataza.atelieBot.Model.MessageAdminAndUser;
 import com.sarataza.atelieBot.Repository.AdminLoginRepository;
 import com.sarataza.atelieBot.Config.BotConfig;
 import com.sarataza.atelieBot.Model.AdminEntity;
@@ -16,6 +17,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -46,63 +48,79 @@ public class BotAtelie extends TelegramLongPollingBot {
         Long chat;
         if (update.hasMessage() && update.getMessage().getChatId() != null) {
             chat = update.getMessage().getChatId();
-        }
-        else {
+        } else {
             chat = update.getCallbackQuery().getMessage().getChatId();
         }
         SendMessage sendMessage = new SendMessage();
         Optional<AdminEntity> admin = adminLoginRepository.getAdminEntityByLogin(chat);
         Optional<AppUserEntity> user = userRepository.getAppUserEntitiesByLogin(chat);
-        if(update.getMessage() != null &&update.getMessage().getText() != null){
-        log.info(update.getMessage().getText());}
+        if (update.getMessage() != null && update.getMessage().getText() != null) {
+            log.info(update.getMessage().getText());
+        }
         log.info(admin.get().getState());
         if (admin.isPresent()) {
             switch (admin.get().getState()) {
                 case ("general") -> {
                     sendMessage = adminBotService.general(update);
                 }
-                case ("change_order_status_ready")->{
+                case ("change_order_status_ready") -> {
                     sendMessage = adminBotService.changeOrderStatus(update);
                 }
-                case ("add_order_begin")->{
+                case ("add_order_begin") -> {
                     sendMessage = adminBotService.addOrderFirstStep(update);
                 }
-                case ("add_order_step_two")-> {
+                case ("add_order_step_two") -> {
                     sendMessage = adminBotService.addOrderTwoStep(update);
                 }
                 case ("add_order_step_three") -> {
                     sendMessage = adminBotService.addOrderThreeStep(update);
                 }
+                case ("initMailing") -> {
+                    sendMessage = sendMessageToUserMailing(update);
+                }
             }
             sendMessageToUser(sendMessage);
-        } else if(user.isPresent()) {
-          switch (user.get().getState()){
-              case ("general") -> {
-                  sendMessage = userBotService.general(update);
-              }
-              case ("add_order") -> {
-                  sendMessage = userBotService.addOrder(update);
-              }
-              case ("send_contact") ->{
-                  sendMessage = userBotService.addContact(update);
-              }
-              default -> {
-                  sendMessage = userBotService.error(update);
-              }
-          }
-          sendMessageToUser(sendMessage);
-        }
-        else {
+        } else if (user.isPresent()) {
+            switch (user.get().getState()) {
+                case ("general") -> {
+                    sendMessage = userBotService.general(update);
+                }
+                case ("add_order") -> {
+                    sendMessage = userBotService.addOrder(update);
+                }
+                case ("send_contact") -> {
+                    sendMessage = userBotService.addContact(update);
+                }
+                default -> {
+                    sendMessage = userBotService.error(update);
+                }
+            }
+            sendMessageToUser(sendMessage);
+        } else {
             sendMessage = userBotService.registrationUser(update);
             sendMessageToUser(sendMessage);
         }
     }
 
-    private void sendMessageToUser(SendMessage sendMessage) {
+    public void sendMessageToUser(SendMessage sendMessage) {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
             log.info(e.toString());
         }
+    }
+    public SendMessage sendMessageToUserMailing(Update update) {
+        MessageAdminAndUser messageAdminAndUser = adminBotService.doMailing(update);
+        if (messageAdminAndUser.getUserList() == null || messageAdminAndUser.getUserMessage() == null){
+            return messageAdminAndUser.getAdminMessage();
+        }
+        for (AppUserEntity user: messageAdminAndUser.getUserList() ) {
+            if(user.getLogin() != null){
+            SendMessage sendMessage = messageAdminAndUser.getUserMessage();
+            sendMessage.setChatId(user.getLogin());
+            sendMessageToUser(sendMessage);}
+        }
+        messageAdminAndUser.getAdminMessage().setText("Рассылка прошла успешно");
+        return messageAdminAndUser.getAdminMessage();
     }
 }

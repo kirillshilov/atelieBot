@@ -52,7 +52,7 @@ public class OrderService {
     public List<OrderEntity> getAllActiveOrder() {
         return orderRepository.getOrderEntitiesByDoneFalse();
     }
-    public Optional<OrderEntity> findOrderByNumber(Integer number){
+    public Optional<OrderEntity> findOrderByNumber(Long number){
         return orderRepository.getOrderEntitiesByNumber(number);
     }
     public OrderEntity saveOrder(OrderEntity orderEntity){

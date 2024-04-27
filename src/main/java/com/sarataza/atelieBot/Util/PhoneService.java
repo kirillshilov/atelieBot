@@ -8,6 +8,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PhoneService {
     public String formatPhone(String phone){
+        if (phone.contains("[a-zA-Z]") || phone.contains("[а-яА-Я]")){
+            throw new PhoneFormatException();
+        }
         if (phone.length() == 11){
             if (phone.startsWith("8")){
                 StringBuilder sb = new StringBuilder(phone);

@@ -154,9 +154,9 @@ public class UserBotService {
         sendMessage.setReplyMarkup(cancelKeyboard());
         String orderNum = update.getMessage().getText();
         sendMessage.setChatId(chatId);
-        Integer orderNumInt;
+        Long orderNumInt;
         try {
-            orderNumInt = Integer.parseInt(orderNum);
+            orderNumInt = Long.valueOf(orderNum);
         } catch (Exception e) {
             sendMessage.setText("Неверно введен номер. Попробуйте ввести еще раз ");
             return sendMessage;

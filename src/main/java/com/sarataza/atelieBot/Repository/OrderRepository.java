@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     List<OrderEntity> getOrderEntitiesByAppUserEntityId( Long id);
-    Optional<OrderEntity> getOrderEntitiesByNumber(Integer number);
+    Optional<OrderEntity> getOrderEntitiesByNumber(Long number);
     List<OrderEntity> getOrderEntitiesByDoneFalse();
 }

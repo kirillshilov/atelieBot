@@ -5,6 +5,7 @@ import com.sarataza.atelieBot.Model.OrderEntity;
 import com.sarataza.atelieBot.Repository.OrderRepository;
 import com.sarataza.atelieBot.Repository.UserRepository;
 import com.sarataza.atelieBot.Util.CONSTANTS;
+import com.sarataza.atelieBot.Util.PhoneService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -29,6 +31,7 @@ public class UserBotService {
     private final OrderRepository orderRepository;
     private final UserService userService;
     private final OrderService orderService;
+    private final PhoneService phoneService;
 
     public SendMessage general(Update update) {
         String query = null;
@@ -41,6 +44,9 @@ public class UserBotService {
         }
         Optional<AppUserEntity> appUserEntity = userService.getAppUserByLogin(chatID);
         StringBuilder text = new StringBuilder();
+        if (query == null){
+            return toGeneral(update);
+        }
         switch (query) {
             case "/orders" -> {
                 List<OrderEntity> orderList = orderService.getAllOrderByUserId(appUserEntity.get().getId());
@@ -94,14 +100,25 @@ public class UserBotService {
 
     public SendMessage addContact(Update update) {
         Long chatId = update.getMessage().getChatId();
+        AppUserEntity appUser = new AppUserEntity();
+        if(!update.hasMessage() || !update.getMessage().hasContact()){
+            return toGeneral(update);
+        }
         String phone = update.getMessage().getContact().getPhoneNumber();
+        phone = phoneService.formatPhone(phone);
+        List <OrderEntity> orderEntities = new ArrayList<>();
         Optional<AppUserEntity> user = userService.getAppUserByPhone(phone);
-        if (!user.isPresent()) {
-            user = userService.getAppUserByLogin(chatId);
+        appUser = userService.getAppUserByLogin(chatId).get();
+        if (user.isPresent() &&
+                user.get().getId() != appUser.getId()){
+            orderEntities = orderRepository.getOrderEntitiesByAppUserEntityId(user.get().getId());
+            for (OrderEntity order: orderEntities) {
+                order.setAppUserEntity(appUser);
+                log.info(orderService.saveOrder(order).toString());
+            }
+            userService.deleteUser(user.get().getId());
         }
         StringBuilder text = new StringBuilder();
-        if (user.isPresent()) {
-            AppUserEntity appUser = user.get();
             appUser.setState("general");
             appUser.setPhone(phone);
             appUser.setLogin(update.getMessage().getChatId());
@@ -109,7 +126,7 @@ public class UserBotService {
             appUser.setLastName(update.getMessage().getContact().getLastName());
             userService.updateUser(appUser);
             SendMessage sendMessage = toGeneral(update);
-            List<OrderEntity> orderList = orderService.getAllOrderByUserId(appUser.getLogin());
+            List<OrderEntity> orderList = orderService.getAllOrderByUserId(appUser.getId());
             if (orderList.isEmpty()) {
                 text.append("Заказы не найдены. Попробуйте найти заказ по номеру из квитанции ");
             } else {
@@ -117,9 +134,6 @@ public class UserBotService {
             }
             sendMessage.setText(text.toString());
             return sendMessage;
-        } else {
-            return registrationUser(update);
-        }
     }
 
     public ReplyKeyboardMarkup getContactKeyboard() {
@@ -148,6 +162,9 @@ public class UserBotService {
     }
 
     public SendMessage addOrder(Update update) {
+        if (update.hasCallbackQuery() && Objects.equals(update.getCallbackQuery().getData(), "/cancel")){
+            return toGeneral(update);
+        }
         Long chatId = update.getMessage().getChatId();
         Optional<AppUserEntity> appUserEntity = userService.getAppUserByLogin(chatId);
         SendMessage sendMessage = new SendMessage();
@@ -258,7 +275,7 @@ public class UserBotService {
         inlineKeyboardButton2Line2.setText("О НАС");
         inlineKeyboardButton2Line2.setCallbackData("/faq");
         InlineKeyboardButton inlineKeyboardButton3Line3 = new InlineKeyboardButton();
-        inlineKeyboardButton3Line3.setText("ОТПРАВИТЬ КОНТАКТ");
+        inlineKeyboardButton3Line3.setText("ОТПРАВИТЬ КОНТАКТ (поиск заказов по номеру)");
         inlineKeyboardButton3Line3.setCallbackData("/send_contact");
         InlineKeyboardButton inlineKeyboardButton4Line4 = new InlineKeyboardButton();
         inlineKeyboardButton4Line4.setText("ПОИСК ЗАКАЗА");

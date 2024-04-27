@@ -13,24 +13,25 @@ public class PhoneService {
         }
         if (phone.length() == 11){
             if (phone.startsWith("8")){
-                StringBuilder sb = new StringBuilder(phone);
-                sb.setCharAt(1, (char) 7);
+                StringBuilder sb = new StringBuilder();
+                StringBuilder phone1 = new StringBuilder(phone);
+                phone1.deleteCharAt(1);
+                sb.append("+7");
+                sb.append(phone);
                return sb.toString();
             } else throw new PhoneFormatException();
         }
         else if (phone.length() == 10){
             if (phone.startsWith("9")){
                 StringBuilder sb = new StringBuilder();
-                sb.append(7);
+                sb.append("+7");
                 sb.append(phone);
                 return sb.toString();
             } else throw new PhoneFormatException();
         }
         else if (phone.length() == 12){
             if (phone.startsWith("+7")){
-                StringBuilder sb = new StringBuilder(phone);
-                sb.deleteCharAt(1);
-                return sb.toString();
+                return phone;
             } else throw new PhoneFormatException();
         }
         throw new PhoneFormatException();

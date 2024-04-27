@@ -54,52 +54,78 @@ public class BotAtelie extends TelegramLongPollingBot {
         SendMessage sendMessage = new SendMessage();
         Optional<AdminEntity> admin = adminLoginRepository.getAdminEntityByLogin(chat);
         Optional<AppUserEntity> user = userRepository.getAppUserEntitiesByLogin(chat);
-        if (update.getMessage() != null && update.getMessage().getText() != null) {
-            log.info(update.getMessage().getText());
-        }
-        log.info(admin.get().getState());
         if (admin.isPresent()) {
-            switch (admin.get().getState()) {
-                case ("general") -> {
-                    sendMessage = adminBotService.general(update);
+            try {
+                if (admin.get().getState() == null) {
+                    admin.get().setState("general");
                 }
-                case ("change_order_status_ready") -> {
-                    sendMessage = adminBotService.changeOrderStatus(update);
+                switch (admin.get().getState()) {
+                    case ("general") -> {
+                        sendMessage = adminBotService.general(update);
+                    }
+                    case ("change_order_status_ready") -> {
+                        sendMessage = adminBotService.changeOrderStatus(update);
+                    }
+                    case ("add_order_begin") -> {
+                        sendMessage = adminBotService.addOrderFirstStep(update);
+                    }
+                    case ("add_order_step_two") -> {
+                        sendMessage = adminBotService.addOrderTwoStep(update);
+                    }
+                    case ("add_order_step_three") -> {
+                        sendMessage = adminBotService.addOrderThreeStep(update);
+                    }
+                    case ("initMailing") -> {
+                        sendMessage = sendMessageToUserMailing(update);
+                    }
+
                 }
-                case ("add_order_begin") -> {
-                    sendMessage = adminBotService.addOrderFirstStep(update);
+            } catch (Exception e){
+                    log.info(e.getMessage());
+                    sendMessage = adminBotService.toGeneral(update);
+                sendMessageToUser(sendMessage);
                 }
-                case ("add_order_step_two") -> {
-                    sendMessage = adminBotService.addOrderTwoStep(update);
-                }
-                case ("add_order_step_three") -> {
-                    sendMessage = adminBotService.addOrderThreeStep(update);
-                }
-                case ("initMailing") -> {
-                    sendMessage = sendMessageToUserMailing(update);
-                }
-            }
-            sendMessageToUser(sendMessage);
+                sendMessageToUser(sendMessage);
         } else if (user.isPresent()) {
-            switch (user.get().getState()) {
-                case ("general") -> {
-                    sendMessage = userBotService.general(update);
+            try {
+                if (user.get().getState() == null) {
+                    user.get().setState("general");
+                    log.info(user.get().getState());
                 }
-                case ("add_order") -> {
-                    sendMessage = userBotService.addOrder(update);
+                switch (user.get().getState()) {
+                    case ("general") -> {
+                        log.info(user.get().getState());
+                        sendMessage = userBotService.general(update);
+                    }
+                    case ("add_order") -> {
+                        log.info(user.get().getState());
+                        sendMessage = userBotService.addOrder(update);
+                    }
+                    case ("send_contact") -> {
+                        sendMessage = userBotService.addContact(update);
+                    }
+                    default -> {
+                        sendMessage = userBotService.error(update);
+                    }
                 }
-                case ("send_contact") -> {
-                    sendMessage = userBotService.addContact(update);
-                }
-                default -> {
-                    sendMessage = userBotService.error(update);
-                }
+            }catch (Exception e){
+                log.info(e.getMessage());
+                sendMessage = userBotService.toGeneral(update);
+                sendMessageToUser(sendMessage);
             }
-            sendMessageToUser(sendMessage);
-        } else {
+                sendMessageToUser(sendMessage);
+
+            } else {
+            try {
             sendMessage = userBotService.registrationUser(update);
             sendMessageToUser(sendMessage);
+            }catch (Exception e){
+                log.info(e.getMessage());
+                sendMessage = userBotService.toGeneral(update);
+                sendMessageToUser(sendMessage);
+            }
         }
+
     }
 
     public void sendMessageToUser(SendMessage sendMessage) {

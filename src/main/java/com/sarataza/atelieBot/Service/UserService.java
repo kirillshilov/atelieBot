@@ -24,6 +24,9 @@ public class UserService {
     public Optional<AppUserEntity> getAppUserByPhone(String phone) {
         return userRepository.getAppUserEntitiesByPhone(phone);
     }
+    public void deleteUser(Long id){
+         userRepository.deleteById(id);
+    }
     public List<AppUserEntity> getAllAppUser(){
         return userRepository.findAll();
     }

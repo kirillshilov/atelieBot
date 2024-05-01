@@ -15,7 +15,10 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -161,6 +164,7 @@ public class AdminBotService {
         }
         OrderEntity order = new OrderEntity();
         order.setDone(false);
+        order.setLocalDate(LocalDate.now().toString());
         order.setNumber(orderNumber);
         this.staticOrder = order;
         log.info(staticOrder.toString());

@@ -83,7 +83,6 @@ public class BotAtelie extends TelegramLongPollingBot {
             } catch (Exception e){
                     log.info(e.getMessage());
                     sendMessage = adminBotService.toGeneral(update);
-                sendMessageToUser(sendMessage);
                 }
                 sendMessageToUser(sendMessage);
         } else if (user.isPresent()) {
@@ -111,7 +110,6 @@ public class BotAtelie extends TelegramLongPollingBot {
             }catch (Exception e){
                 log.info(e.getMessage());
                 sendMessage = userBotService.toGeneral(update);
-                sendMessageToUser(sendMessage);
             }
                 sendMessageToUser(sendMessage);
 

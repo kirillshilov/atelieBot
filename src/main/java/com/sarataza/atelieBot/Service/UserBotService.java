@@ -7,6 +7,7 @@ import com.sarataza.atelieBot.Repository.UserRepository;
 import com.sarataza.atelieBot.Util.CONSTANTS;
 import com.sarataza.atelieBot.Util.PhoneService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -83,7 +84,10 @@ public class UserBotService {
             case "/send_contact" -> {
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setReplyMarkup(cancelKeyboard());
-                sendMessage.setText("Для отправки контактных данных нажмите кнопку ОТПРАВИТЬ КОНТАКТ ");
+                sendMessage.setText("Для отправки контактных данных нажмите кнопку ОТПРАВИТЬ КОНТАКТ." +
+                        " Отправляя номер телефона вы соглашаетесь на обработку персональных данных " +
+                        "данные сохраняются только для поиска заказов и не передаются третьим лицам. " +
+                        " Если вы не хотите предоставлять свой номер телефона то можете найти заказ по его номеру ");
                 sendMessage.setChatId(chatID);
                 sendMessage.setReplyMarkup(getContactKeyboard());
                 AppUserEntity appUser = appUserEntity.get();
@@ -98,6 +102,7 @@ public class UserBotService {
         return toGeneral(update);
     }
 
+    @SneakyThrows
     public SendMessage addContact(Update update) {
         Long chatId = update.getMessage().getChatId();
         AppUserEntity appUser = new AppUserEntity();

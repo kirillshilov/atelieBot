@@ -8,6 +8,7 @@ import com.sarataza.atelieBot.Config.BotConfig;
 import com.sarataza.atelieBot.Model.AdminEntity;
 import com.sarataza.atelieBot.Repository.UserRepository;
 import com.sarataza.atelieBot.Service.AdminBotService;
+import com.sarataza.atelieBot.Service.SuperUserService;
 import com.sarataza.atelieBot.Service.UserBotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.util.List;
 import java.util.Optional;
 
 
@@ -30,6 +30,7 @@ public class BotAtelie extends TelegramLongPollingBot {
     private final UserRepository userRepository;
     private final UserBotService userBotService;
     private final AdminBotService adminBotService;
+    private final SuperUserService suService;
 
 
     @Override
@@ -52,6 +53,9 @@ public class BotAtelie extends TelegramLongPollingBot {
             chat = update.getCallbackQuery().getMessage().getChatId();
         }
         SendMessage sendMessage = new SendMessage();
+        if (update.hasMessage() && update.getMessage().getText() != null && update.getMessage().getText().contains("/SUA")) {
+
+        }
         Optional<AdminEntity> admin = adminLoginRepository.getAdminEntityByLogin(chat);
         Optional<AppUserEntity> user = userRepository.getAppUserEntitiesByLogin(chat);
         if (admin.isPresent()) {

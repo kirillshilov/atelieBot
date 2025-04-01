@@ -1,9 +1,7 @@
 package com.sarataza.atelieBot.Model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,7 @@ public class AppUserEntity {
     private String lastName;
     private String phone;
     private String state;
-    @OneToMany(cascade = CascadeType.ALL,mappedBy = "appUserEntity")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "appUserEntity")
     @ToString.Exclude
     private List<OrderEntity> orderList = new ArrayList<>();
 }

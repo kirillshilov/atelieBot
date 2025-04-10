@@ -80,7 +80,7 @@ public class BotAtelie extends TelegramLongPollingBot {
 
                 }
             } catch (Exception e){
-                    log.info(e.getMessage());
+                    log.warn(e.getMessage());
                     sendMessage = adminBotService.toGeneral(update);
                 }
                 sendMessageToUser(sendMessage);
@@ -104,7 +104,7 @@ public class BotAtelie extends TelegramLongPollingBot {
                     }
                 }
             }catch (Exception e){
-                log.info(e.getMessage());
+                log.warn(e.getMessage());
                 sendMessage = userBotService.toGeneral(update);
             }
                 sendMessageToUser(sendMessage);
@@ -114,7 +114,7 @@ public class BotAtelie extends TelegramLongPollingBot {
             sendMessage = userBotService.registrationUser(update);
             sendMessageToUser(sendMessage);
             }catch (Exception e){
-                log.info(e.getMessage());
+                log.warn(e.getMessage());
                 sendMessage = userBotService.toGeneral(update);
                 sendMessageToUser(sendMessage);
             }
@@ -126,7 +126,7 @@ public class BotAtelie extends TelegramLongPollingBot {
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
-            log.info(e.toString());
+            log.warn(e.toString());
         }
     }
     public SendMessage sendMessageToUserMailing(Update update) {

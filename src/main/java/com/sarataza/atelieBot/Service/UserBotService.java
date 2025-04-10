@@ -93,7 +93,7 @@ public class UserBotService {
                 AppUserEntity appUser = appUserEntity.get();
                 appUser.setState("send_contact");
                 userService.updateUser(appUser);
-                log.info(appUser.toString());
+                log.warn(appUser.toString());
                 return sendMessage;
             }
             default -> toGeneral(update);
@@ -119,7 +119,7 @@ public class UserBotService {
             orderEntities = orderRepository.getOrderEntitiesByAppUserEntityId(user.get().getId());
             for (OrderEntity order: orderEntities) {
                 order.setAppUserEntity(appUser);
-                log.info(orderService.saveOrder(order).toString());
+                log.warn(orderService.saveOrder(order).toString());
             }
             userService.deleteUser(user.get().getId());
         }

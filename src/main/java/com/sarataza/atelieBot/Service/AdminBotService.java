@@ -155,7 +155,7 @@ public class AdminBotService {
         try {
             orderNumber = Long.valueOf(update.getMessage().getText());
         } catch (Exception e) {
-            log.info(e.getMessage());
+            log.warn(e.getMessage());
             SendMessage sendMessage = new SendMessage();
             sendMessage.setReplyMarkup(cancelWithOrderKeyboard());
             sendMessage.setText("Неверный номер заказа. Номер должен содержать только цифры. Введите другой номер заказа ");
@@ -167,7 +167,7 @@ public class AdminBotService {
         order.setLocalDate(LocalDate.now().toString());
         order.setNumber(orderNumber);
         this.staticOrder = order;
-        log.info(staticOrder.toString());
+        log.warn(staticOrder.toString());
         SendMessage sendMessage = new SendMessage();
         sendMessage.setReplyMarkup(cancelWithOrderKeyboard());
         sendMessage.setText("Введите работы по данному заказу ");

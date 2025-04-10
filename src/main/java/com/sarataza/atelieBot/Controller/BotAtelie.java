@@ -88,15 +88,12 @@ public class BotAtelie extends TelegramLongPollingBot {
             try {
                 if (user.get().getState() == null) {
                     user.get().setState("general");
-                    log.info(user.get().getState());
                 }
                 switch (user.get().getState()) {
                     case ("general") -> {
-                        log.info(user.get().getState());
                         sendMessage = userBotService.general(update);
                     }
                     case ("add_order") -> {
-                        log.info(user.get().getState());
                         sendMessage = userBotService.addOrder(update);
                     }
                     case ("send_contact") -> {

@@ -44,7 +44,6 @@ public class BotAtelie extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        log.info(update.toString());
         Long chat;
         if (update.hasMessage() && update.getMessage().getChatId() != null) {
             chat = update.getMessage().getChatId();

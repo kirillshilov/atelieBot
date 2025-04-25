@@ -1,7 +1,6 @@
-package com.sarataza.atelieBot.Service;
+package com.sarataza.atelieBot.Service.Admin;
 
 import com.sarataza.atelieBot.Model.AdminEntity;
-import com.sarataza.atelieBot.Model.AppUserEntity;
 import com.sarataza.atelieBot.Repository.AdminLoginRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

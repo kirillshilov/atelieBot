@@ -1,8 +1,8 @@
 package com.sarataza.atelieBot.Service;
 
-import com.sarataza.atelieBot.Model.AppUserEntity;
 import com.sarataza.atelieBot.Model.OrderEntity;
 import com.sarataza.atelieBot.Repository.OrderRepository;
+import com.sarataza.atelieBot.Service.User.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

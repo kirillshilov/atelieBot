@@ -16,6 +16,15 @@ local   all             all                                     md5
 host    all             all             127.0.0.1/32            md5
 host    all             all             ::1/128                 md5
 
+после
+Перезапусти службу PostgreSQL:
+
+Нажми Win + R, введи services.msc и нажми Enter.
+
+Найди службу postgresql-X.Y (например, postgresql-15).
+
+Правый клик → Перезапустить (Restart).
+
 проперти для локального запуска вне родной среды
 
 spring.application.name=atelieBot

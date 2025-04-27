@@ -1,8 +1,8 @@
-package com.sarataza.atelieBot.Service;
+package com.sarataza.atelieBot.Service.User;
 
 import com.sarataza.atelieBot.Model.AppUserEntity;
 import com.sarataza.atelieBot.Repository.UserRepository;
-import com.sarataza.atelieBot.Service.util.PhoneEncryptor;
+import com.sarataza.atelieBot.Util.PhoneEncryptor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,5 @@
-package com.sarataza.atelieBot.Service.util;
+package com.sarataza.atelieBot.Util;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
